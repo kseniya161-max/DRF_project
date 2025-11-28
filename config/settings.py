@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-
+    'users',
+    'coursers',
 ]
 
 MIDDLEWARE = [
@@ -83,7 +84,7 @@ DATABASES = {
 }
 
 MEDIA_URL = 'media/'
-MEDIA_ROOT = os.path.join(BASE_DIR/'media')
+MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 
 
 # Password validation
