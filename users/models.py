@@ -3,7 +3,7 @@ from django.db import models
 
 
 class User(AbstractUser):
-    " Модель Пользователя"
+    "Модель Пользователя"
 
     username = None
     email = models.EmailField(max_length=35, unique=True, help_text="Введите email")
@@ -20,7 +20,6 @@ class User(AbstractUser):
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
-
     class Meta:
-        verbose_name = 'Пользователь'
-        verbose_name_plural = 'Пользователи'
+        verbose_name = "Пользователь"
+        verbose_name_plural = "Пользователи"
