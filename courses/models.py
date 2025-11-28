@@ -10,9 +10,9 @@ class Course(models.Model):
         return self.name
 
 
-class Meta:
-    verbose_name = "Курс"
-    verbose_name_plural = "Курсы"
+    class Meta:
+        verbose_name = "Курс"
+        verbose_name_plural = "Курсы"
 
 
 class Lesson(models.Model):
