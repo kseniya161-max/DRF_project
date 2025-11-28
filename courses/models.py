@@ -21,16 +21,14 @@ class Course(models.Model):
 class Lesson(models.Model):
     "Модель Урок"
 
-    title = models.TextField(max_length=150, unique=True, help_text="Название")
+    title = models.CharField(max_length=150, unique=True, help_text="Название")
     description = models.TextField(
         max_length=300, blank=True, null=True, help_text="Введите описание"
     )
     preview = models.ImageField(
         upload_to="courses/images", blank=True, null=True, help_text="Изображение"
     )
-    link = models.URLField(
-        upload_to="courses/video", blank=True, null=True, help_text="Видео"
-    )
+    link = models.URLField(blank=True, null=True, help_text="Видео")
     course = models.ForeignKey(Course, related_name="lessons", on_delete=models.CASCADE)
 
     def __str__(self):
