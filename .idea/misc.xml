@@ -3,4 +3,5 @@
   <component name="Black">
     <option name="sdkName" value="Poetry (DRF_project)" />
   </component>
+  <component name="ProjectRootManager" version="2" project-jdk-name="Poetry (DRF_project)" project-jdk-type="Python SDK" />
 </project>
