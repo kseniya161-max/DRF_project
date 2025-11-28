@@ -1,10 +1,4 @@
-from rest_framework.generics import (
-    CreateAPIView,
-    ListAPIView,
-    RetrieveAPIView,
-    UpdateAPIView,
-    DestroyAPIView,
-)
+from rest_framework.generics import (CreateAPIView, ListAPIView, RetrieveAPIView, UpdateAPIView,DestroyAPIView,)
 from rest_framework.viewsets import ModelViewSet
 from courses.models import Course, Lesson
 from courses.serializers import CourseSerializer, LessonSerializer
