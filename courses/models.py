@@ -5,7 +5,9 @@ class Course(models.Model):
     "Модель Курса"
 
     name = models.CharField(max_length=150, unique=True, help_text="Название")
-    preview = models.ImageField(upload_to="courses/images", blank=True, null=True, help_text="Изображение")
+    preview = models.ImageField(
+        upload_to="courses/images", blank=True, null=True, help_text="Изображение"
+    )
     description = models.TextField(
         max_length=300, blank=True, null=True, help_text="Введите описание"
     )
