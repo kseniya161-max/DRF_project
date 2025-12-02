@@ -9,7 +9,6 @@ from courses.serializers import CourseSerializer, LessonSerializer, CourseSerial
 
 class CourseViewSet(ModelViewSet):
     queryset = Course.objects.all()
-    serializer_class = CourseSerializer
 
     def get_serializer_class(self):
         if self.action == 'retrieve':
