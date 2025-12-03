@@ -29,18 +29,37 @@ class User(AbstractUser):
 
 class Payments(models.Model):
     """Модель Платежей"""
-    username = models.ForeignKey(User, on_delete=models.CASCADE, related_name='payments', help_text="Пользователь")
+
+    username = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="payments",
+        help_text="Пользователь",
+    )
     payment_date = models.DateTimeField(auto_now_add=True)
-    paid_course = models.ForeignKey(Course, on_delete=models.CASCADE, blank=True, null=True, help_text="Оплаченый курс")
-    paid_lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, blank=True, null=True, help_text="Оплаченый курс урок")
+    paid_course = models.ForeignKey(
+        Course,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        help_text="Оплаченый курс",
+    )
+    paid_lesson = models.ForeignKey(
+        Lesson,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        help_text="Оплаченый курс урок",
+    )
     sum = models.DecimalField(max_digits=10, decimal_places=2, help_text="Сумма оплаты")
-    payment_detail = models.CharField(max_length=100, help_text="Наличные или перевод на счет")
+    payment_detail = models.CharField(
+        max_length=100, help_text="Наличные или перевод на счет"
+    )
 
     class Meta:
         verbose_name = "Платеж"
         verbose_name_plural = "Платежи"
-        unique_together = ('username', 'paid_course', 'paid_lesson')
+        unique_together = ("username", "paid_course", "paid_lesson")
 
     def __str__(self):
         return f"{self.username} - {self.sum} - {self.payment_date}"
-
