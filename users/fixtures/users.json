@@ -1,0 +1,22 @@
+[
+  {"model": "users.user",
+    "pk": 1,
+    "fields": {
+      "email": "111@mail.ru",
+      "phone": "1234567890",
+      "location": "Москва",
+      "avatar": null,
+      "password": "hashed_password"
+    }
+  },
+  {"model": "users.user",
+    "pk": 2,
+    "fields": {
+      "email": "222@mail.ru",
+      "phone": "1234567899",
+      "location": "Санкт-Петербург",
+      "avatar": null,
+      "password": "hashed_password"
+    }
+  }
+  ]
