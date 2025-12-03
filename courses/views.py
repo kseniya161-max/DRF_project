@@ -14,9 +14,6 @@ class CourseViewSet(ModelViewSet):
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
     filterset_fields = ('course', 'lesson',)
 
-
-
-
     def get_serializer_class(self):
         if self.action == 'retrieve':
             return CourseSerializerDetail
