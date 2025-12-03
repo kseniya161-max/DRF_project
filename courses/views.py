@@ -1,3 +1,5 @@
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
 from rest_framework.generics import (CreateAPIView, DestroyAPIView,
                                      ListAPIView, RetrieveAPIView,
                                      UpdateAPIView)
@@ -9,6 +11,11 @@ from courses.serializers import CourseSerializer, LessonSerializer, CourseSerial
 
 class CourseViewSet(ModelViewSet):
     queryset = Course.objects.all()
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
+    filterset_fields = ('course', 'lesson',)
+
+
+
 
     def get_serializer_class(self):
         if self.action == 'retrieve':

@@ -4,6 +4,10 @@ from rest_framework.serializers import ModelSerializer
 from courses.models import Course, Lesson
 
 class LessonSerializer(ModelSerializer):
+    courses = SerializerMethodField()
+
+    def get_courses(self, lesson):
+        return[course.name for course in Course.objects.filter(lesson=lesson)]
     class Meta:
         model = Lesson
         fields = "__all__"
