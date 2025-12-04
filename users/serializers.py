@@ -15,4 +15,3 @@ class UserAPIView(ModelSerializer):
         model = User
         fields = '__all__'
 
-
