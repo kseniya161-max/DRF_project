@@ -3,8 +3,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from rest_framework.generics import ListAPIView, CreateAPIView
 
-from users.models import Payments
-from users.serializers import PaymentsSerializer
+from users.models import Payments, User
+from users.serializers import PaymentsSerializer, UserAPIView
 
 
 # Create your views here.
@@ -22,3 +22,10 @@ class PaymentsListAPIView(ListAPIView):
 
 class UserCreateAPIView(CreateAPIView):
     serializer_class = UserAPIView
+    queryset = User.objects.all()
+
+    def perfom_create(self, serializer):
+        user = serializer.save(is_active=True)
+        user.set_password(user.password)
+        user.save()
+

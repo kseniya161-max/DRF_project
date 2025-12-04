@@ -10,7 +10,7 @@ class PaymentsSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class UserAPIView(serializers.ModelSerializer):
+class UserAPIView(ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
