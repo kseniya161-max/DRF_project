@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, CreateAPIView
 
 from users.models import Payments
 from users.serializers import PaymentsSerializer
@@ -18,3 +18,7 @@ class PaymentsListAPIView(ListAPIView):
         "paid_lesson",
     )
     ordering_fields = ("payment_date",)
+
+
+class UserCreateAPIView(CreateAPIView):
+    serializer_class = UserAPIView
