@@ -16,6 +16,7 @@ from courses.serializers import (
     LessonSerializer,
     CourseSerializerDetail,
 )
+from users.permissions import IsModerator
 
 
 class CourseViewSet(ModelViewSet):
@@ -34,6 +35,14 @@ class CourseViewSet(ModelViewSet):
         if self.action == "retrieve":
             return CourseSerializerDetail
         return CourseSerializer
+
+    def get_permissions(self):
+        if self.action in ['create', 'destroy']:
+            self.permission_classes = (~IsModerator)
+        elif self.action in ['update', 'retrieve']:
+            self.permission_classes = (IsModerator)
+        return super().get_permissions()
+
 
 
 class LessonCreateAPIView(CreateAPIView):

@@ -9,6 +9,6 @@ class Command(BaseCommand):
         user.is_staff = True
         user.is_active = True
         user.is_superuser = True
-        user.set_password('qwe123')
+        user.set_password('admin')
         user.save()
 
