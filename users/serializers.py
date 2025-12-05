@@ -14,10 +14,9 @@ class PaymentsSerializer(serializers.ModelSerializer):
 class UserAPIView(ModelSerializer):
     class Meta:
         model = User
-        fields = '__all__'
+        fields = "__all__"
 
     def validate_email(self, value):
         if User.objects.filter(email=value).exists():
             raise ValidationError("Данный email уже существует")
         return value
-

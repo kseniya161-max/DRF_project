@@ -1,11 +1,18 @@
 from django.shortcuts import render
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
-from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveAPIView, DestroyAPIView, UpdateAPIView
+from rest_framework.generics import (
+    ListAPIView,
+    CreateAPIView,
+    RetrieveAPIView,
+    DestroyAPIView,
+    UpdateAPIView,
+)
 from rest_framework.permissions import IsAuthenticated
 
 from users.models import Payments, User
 from users.serializers import PaymentsSerializer, UserAPIView
+
 
 # Create your views here.
 class PaymentsListAPIView(ListAPIView):
@@ -19,6 +26,7 @@ class PaymentsListAPIView(ListAPIView):
     )
     ordering_fields = ("payment_date",)
     permission_classes = [IsAuthenticated]
+
 
 class UserListAPIView(ListAPIView):
     serializer_class = UserAPIView
@@ -44,14 +52,11 @@ class UserUpdateAPIView(UpdateAPIView):
     permission_classes = [IsAuthenticated]
 
 
-
 class UserCreateAPIView(CreateAPIView):
     serializer_class = UserAPIView
     queryset = User.objects.all()
-
 
     def perform_create(self, serializer):
         user = serializer.save(is_active=True)
         user.set_password(user.password)
         user.save()
-
