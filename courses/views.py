@@ -33,7 +33,7 @@ class CourseViewSet(ModelViewSet):
     ]
     filterset_fields = (
         "course",
-        "lesson",
+        "lessons__title",
     )
     permission_classes = [IsAuthenticated]
 
@@ -42,13 +42,25 @@ class CourseViewSet(ModelViewSet):
             return CourseSerializerDetail
         return CourseSerializer
 
+    # def get_permissions(self):
+    #     if self.action == "create":
+    #         self.permission_classes = ~IsModerator
+    #     elif self.action in ["update", "retrieve"]:
+    #         self.permission_classes = (IsModerator | IsOwner,)
+    #     elif self.action == "destroy":
+    #         self.permission_classes = (~IsModerator | IsOwner,)
+    #     return super().get_permissions()
+
     def get_permissions(self):
         if self.action == "create":
-            self.permission_classes = ~IsModerator
+            self.permission_classes = [IsAuthenticated]  # например, только аутентифицированные пользователи
         elif self.action in ["update", "retrieve"]:
-            self.permission_classes = (IsModerator | IsOwner,)
+            self.permission_classes = [IsAuthenticated, IsModerator | IsOwner]
         elif self.action == "destroy":
-            self.permission_classes = (~IsModerator | IsOwner,)
+            self.permission_classes = [IsAuthenticated, IsOwner | IsModerator]
+        else:
+            self.permission_classes = [IsAuthenticated]  # для всех остальных действий
+
         return super().get_permissions()
 
     def perform_create(self, serializer):

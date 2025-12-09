@@ -11,7 +11,7 @@ class LessonSerializer(ModelSerializer):
     link = serializers.CharField(validators = [link_validator])
 
     def get_courses(self, lesson):
-        return [course.name for course in Course.objects.filter(lesson=lesson)]
+        return [course.name for course in Course.objects.filter(lessons=lesson)]
 
     class Meta:
         model = Lesson
