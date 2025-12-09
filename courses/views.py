@@ -1,5 +1,5 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, request
+from rest_framework import filters, request, status
 from rest_framework.generics import (
     CreateAPIView,
     DestroyAPIView,
@@ -23,6 +23,7 @@ from users.permissions import IsModerator, IsOwner
 
 class CourseViewSet(ModelViewSet):
     queryset = Course.objects.all()
+    serializer_class = CourseSerializer
     filter_backends = [
         DjangoFilterBackend,
         filters.OrderingFilter,
@@ -53,6 +54,11 @@ class CourseViewSet(ModelViewSet):
 
     def get_queryset(self):
         return Course.objects.filter(owner=self.request.user)
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
 
 
 
@@ -120,8 +126,8 @@ class SubscriptionListAPIView(APIView):
 
 
     def post(self, *args, **kwargs):
-        user = request.user
-        course_id = request.data.get('course_id')
+        user = self.request.user
+        course_id = self.request.data.get('course_id')
         course_item = get_object_or_404(Course, id=course_id)
         subs_item = Subscription.objects.filter(user=user, course=course_item)
         if subs_item.exists():
@@ -130,7 +136,7 @@ class SubscriptionListAPIView(APIView):
         else:
             Subscription.objects.create(user=user, course=course_item)
             message = 'Новая подписка добавлена'
-        return Response({'message': message})
+        return Response({'message': message}, status=status.HTTP_200_OK)
 
 
 

@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import ModelSerializer
 
-from courses.models import Course, Lesson
+from courses.models import Course, Lesson, Subscription
 from courses.validators import link_validator
 
 
@@ -19,7 +19,15 @@ class LessonSerializer(ModelSerializer):
 
 
 class CourseSerializer(ModelSerializer):
-    lesson = LessonSerializer()
+    lessons = LessonSerializer(many=True)
+    is_subscribed = serializers.SerializerMethodField()
+
+    def get_is_subscribed(self, obj):
+        user = self.context.get('request').user
+        if user.is_authenticated:
+            return Subscription.objects.filter(user=user, course=obj).exists()
+        return False
+
 
     class Meta:
         model = Course
@@ -36,6 +44,3 @@ class CourseSerializerDetail(ModelSerializer):
     class Meta:
         model = Course
         fields = ("name", "preview", "description", "count_course_with_same_lesson")
-
-
-class SerializerMethodField()
