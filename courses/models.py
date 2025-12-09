@@ -1,6 +1,6 @@
 from django.db import models
 
-from users.models import User
+
 
 
 class Course(models.Model):
@@ -34,7 +34,7 @@ class Lesson(models.Model):
         upload_to="courses/images", blank=True, null=True, help_text="Изображение"
     )
     link = models.URLField(blank=True, null=True, help_text="Видео")
-    course = models.ForeignKey(Course, related_name="lessons", on_delete=models.CASCADE)
+    course = models.ForeignKey('courses.Course', related_name="lessons", on_delete=models.CASCADE)
     owner = models.ForeignKey('users.User', null = True, on_delete=models.CASCADE, related_name='lesson')
 
     def __str__(self):
