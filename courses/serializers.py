@@ -36,3 +36,6 @@ class CourseSerializerDetail(ModelSerializer):
     class Meta:
         model = Course
         fields = ("name", "preview", "description", "count_course_with_same_lesson")
+
+
+class SerializerMethodField()

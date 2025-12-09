@@ -1,20 +1,22 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters
+from rest_framework import filters, request
 from rest_framework.generics import (
     CreateAPIView,
     DestroyAPIView,
     ListAPIView,
     RetrieveAPIView,
-    UpdateAPIView,
+    UpdateAPIView, get_object_or_404,
 )
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
-from courses.models import Course, Lesson
+from courses.models import Course, Lesson, Subscription
 from courses.serializers import (
     CourseSerializer,
     LessonSerializer,
-    CourseSerializerDetail,
+    CourseSerializerDetail, SerializerMethodField,
 )
 from users.permissions import IsModerator, IsOwner
 
@@ -109,3 +111,28 @@ class LessonDestroyAPIView(DestroyAPIView):
 
     def get_queryset(self):
         return Lesson.objects.filter(owner=self.request.user)
+
+
+class SubscriptionListAPIView(APIView):
+    queryset = Subscription.objects.all()
+    serializer_class = SerializerMethodField
+    permission_classes = [IsAuthenticated]
+
+
+    def post(self, *args, **kwargs):
+        user = request.user
+        course_id = request.data.get('course_id')
+        course_item = get_object_or_404(Course, id=course_id)
+        subs_item = Subscription.objects.filter(user=user, course=course_item)
+        if subs_item.exists():
+            subs_item.delete()
+            message = 'Подписка удалена'
+        else:
+            Subscription.objects.create(user=user, course=course_item)
+            message = 'Новая подписка добавлена'
+        return Response({'message': message})
+
+
+
+
+
