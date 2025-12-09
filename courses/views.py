@@ -13,6 +13,7 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
 from courses.models import Course, Lesson, Subscription
+from courses.paginators import CoursesPaginator, LessonsPaginator
 from courses.serializers import (
     CourseSerializer,
     LessonSerializer,
@@ -24,6 +25,7 @@ from users.permissions import IsModerator, IsOwner
 class CourseViewSet(ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
+    pagination_class = CoursesPaginator
     filter_backends = [
         DjangoFilterBackend,
         filters.OrderingFilter,
@@ -81,6 +83,7 @@ class LessonListAPIView(ListAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
     permission_classes = [IsAuthenticated]
+    pagination_class = LessonsPaginator
 
     def get_queryset(self):
         return Lesson.objects.filter(owner=self.request.user)
