@@ -1,11 +1,14 @@
+from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import ModelSerializer
 
 from courses.models import Course, Lesson
+from courses.validators import link_validator
 
 
 class LessonSerializer(ModelSerializer):
     courses = SerializerMethodField()
+    link = serializers.CharField(validators = [link_validator])
 
     def get_courses(self, lesson):
         return [course.name for course in Course.objects.filter(lesson=lesson)]

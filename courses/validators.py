@@ -2,6 +2,7 @@ from urllib.parse import urlparse
 
 from rest_framework .serializers import ValidationError
 
+
 allowed = ["youtube.com", "www.youtube.com"]
 
 def link_validator(value):
