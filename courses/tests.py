@@ -60,6 +60,7 @@ class LessonSubscriptionTest(APITestCase):
     def test_lesson_delete(self):
         url = reverse("courses:lesson_delete", args=(self.lesson.pk,))
         response = self.client.delete(url)
+        print(response.json())
         self.assertEqual(
             response.status_code, status.HTTP_204_NO_CONTENT
         )
