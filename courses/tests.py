@@ -24,8 +24,24 @@ class LessonSubscriptionTest(APITestCase):
 
         self.assertEqual(
             response.data.get("title"), self.lesson.title
-
             )
+
+    def test_lesson_create(self):
+        url = reverse("courses:lesson_create")
+        data = {
+            "title":"Испанский",
+            "course": self.course.pk,
+            "link": "http://youtube.com/video"
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(
+            response.status_code, status.HTTP_201_CREATED, msg=f"Response data: {response.data}"
+        )
+
+        self.assertEqual(
+            Lesson.objects.count(), 2
+        )
+
 
 
 
