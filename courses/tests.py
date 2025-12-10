@@ -11,7 +11,7 @@ class LessonSubscriptionTest(APITestCase):
         """Создаем значения"""
         self.user = User.objects.create(email="admin_3@mail.ru")
         self.course = Course.objects.create(name="Английский", owner=self.user)
-        self.lesson = Lesson.objects.create(title="Elementary", course=self.course, owner=self.user)
+        self.lesson = Lesson.objects.create(title="Elementary", course=self.course, owner=self.user, link="https://youtube.com/video1", description='Elementary')
         self.client.force_authenticate(user=self.user)
 
     def test_lesson_retrieve(self):
@@ -60,7 +60,6 @@ class LessonSubscriptionTest(APITestCase):
     def test_lesson_delete(self):
         url = reverse("courses:lesson_delete", args=(self.lesson.pk,))
         response = self.client.delete(url)
-        print(response.json())
         self.assertEqual(
             response.status_code, status.HTTP_204_NO_CONTENT
         )
@@ -72,6 +71,28 @@ class LessonSubscriptionTest(APITestCase):
         url = reverse("courses:lesson_list")
         response = self.client.get(url)
         data = response.json()
-        self.assertEqual(
-            response.status_code, status.HTTP_200_OK, msg=f"Response data: {response.data}"
-        )
+        result = {
+            "count": 1,
+            "next": None,
+            "previous": None,
+            "results": [
+    {
+        "id": self.lesson.pk,
+        "courses": [self.course.name],
+        "link": self.lesson.link,
+        "title": self.lesson.title,
+        "description": self.lesson.description,
+        "preview": None,
+        "course": self.course.pk,
+        "owner": self.user.pk
+    }
+]
+        }
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('count', data)
+        self.assertIn('results', data)
+        self.assertIsInstance(data['results'], list)
+        self.assertEqual(data, result)
+
+
