@@ -57,6 +57,16 @@ class LessonSubscriptionTest(APITestCase):
             response.data.get("title"), "Китайский"
         )
 
+    def test_lesson_delete(self):
+        url = reverse("courses:lesson_delete", args=(self.lesson.pk,))
+        response = self.client.delete(url)
+        self.assertEqual(
+            response.status_code, status.HTTP_204_NO_CONTENT
+        )
+        self.assertEqual(
+            Lesson.objects.count(), 0
+        )
+
 
 
 
