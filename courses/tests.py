@@ -42,6 +42,21 @@ class LessonSubscriptionTest(APITestCase):
             Lesson.objects.count(), 2
         )
 
+    def test_lesson_update(self):
+        url = reverse("courses:lesson_update", args=(self.lesson.pk,))
+        data = {
+            "title": "Китайский",
+        }
+        response = self.client.patch(url, data)
+        data = response.json()
+        self.assertEqual(
+            response.status_code, status.HTTP_200_OK
+        )
+        self.lesson.refresh_from_db()
+        self.assertEqual(
+            response.data.get("title"), "Китайский"
+        )
+
 
 
 
