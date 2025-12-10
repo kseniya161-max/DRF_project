@@ -67,7 +67,10 @@ class LessonSubscriptionTest(APITestCase):
             Lesson.objects.count(), 0
         )
 
-
-
-
-
+    def test_lesson_list(self):
+        url = reverse("courses:lesson_list")
+        response = self.client.get(url)
+        data = response.json()
+        self.assertEqual(
+            response.status_code, status.HTTP_200_OK, msg=f"Response data: {response.data}"
+        )
