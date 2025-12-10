@@ -1,5 +1,8 @@
 from django.db import models
 
+
+
+
 class Course(models.Model):
     "Модель Курса"
 
@@ -31,7 +34,7 @@ class Lesson(models.Model):
         upload_to="courses/images", blank=True, null=True, help_text="Изображение"
     )
     link = models.URLField(blank=True, null=True, help_text="Видео")
-    course = models.ForeignKey(Course, related_name="lessons", on_delete=models.CASCADE)
+    course = models.ForeignKey('courses.Course', related_name="lessons", on_delete=models.CASCADE)
     owner = models.ForeignKey('users.User', null = True, on_delete=models.CASCADE, related_name='lesson')
 
     def __str__(self):
@@ -40,3 +43,16 @@ class Lesson(models.Model):
     class Meta:
         verbose_name = "Урок"
         verbose_name_plural = "Уроки"
+
+
+class Subscription(models.Model):
+    user = models.ForeignKey('users.User', on_delete=models.CASCADE)
+    course = models.ForeignKey('courses.Course', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.user.username} данный пользователь подписан на {self.course.name}"
+
+    class Meta:
+        unique_together = ('user', 'course')
+        verbose_name = "Подписка"
+        verbose_name_plural = "Подписки"
