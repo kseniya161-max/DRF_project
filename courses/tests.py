@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
-from courses.models import Lesson, Course
+from courses.models import Lesson, Course, Subscription
 from users.models import User
 
 
@@ -95,4 +95,17 @@ class LessonSubscriptionTest(APITestCase):
         self.assertIsInstance(data['results'], list)
         self.assertEqual(data, result)
 
+    def test_subscription(self):
+        url = reverse("courses:subscription-list")
+        data = {
+            "course_id": self.course.id
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['message'], 'Новая подписка добавлена')
+        self.assertTrue(Subscription.objects.filter(user=self.user, course=self.course).exists())
 
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['message'], 'Подписка удалена')
+        self.assertFalse(Subscription.objects.filter(user=self.user, course=self.course).exists())
