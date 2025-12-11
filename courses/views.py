@@ -5,7 +5,8 @@ from rest_framework.generics import (
     DestroyAPIView,
     ListAPIView,
     RetrieveAPIView,
-    UpdateAPIView, get_object_or_404,
+    UpdateAPIView,
+    get_object_or_404,
 )
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -17,7 +18,8 @@ from courses.paginators import CoursesPaginator, LessonsPaginator
 from courses.serializers import (
     CourseSerializer,
     LessonSerializer,
-    CourseSerializerDetail, SerializerMethodField,
+    CourseSerializerDetail,
+    SerializerMethodField,
 )
 from users.permissions import IsModerator, IsOwner
 
@@ -71,9 +73,8 @@ class CourseViewSet(ModelViewSet):
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
-        context['request'] = self.request
+        context["request"] = self.request
         return context
-
 
 
 class LessonCreateAPIView(CreateAPIView):
@@ -139,21 +140,15 @@ class SubscriptionListAPIView(APIView):
     serializer_class = SerializerMethodField
     permission_classes = [IsAuthenticated]
 
-
     def post(self, *args, **kwargs):
         user = self.request.user
-        course_id = self.request.data.get('course_id')
+        course_id = self.request.data.get("course_id")
         course_item = get_object_or_404(Course, id=course_id)
         subs_item = Subscription.objects.filter(user=user, course=course_item)
         if subs_item.exists():
             subs_item.delete()
-            message = 'Подписка удалена'
+            message = "Подписка удалена"
         else:
             Subscription.objects.create(user=user, course=course_item)
-            message = 'Новая подписка добавлена'
-        return Response({'message': message}, status=status.HTTP_200_OK)
-
-
-
-
-
+            message = "Новая подписка добавлена"
+        return Response({"message": message}, status=status.HTTP_200_OK)

@@ -1,8 +1,6 @@
 from django.db import models
 
 
-
-
 class Course(models.Model):
     "Модель Курса"
 
@@ -13,7 +11,9 @@ class Course(models.Model):
     description = models.TextField(
         max_length=300, blank=True, null=True, help_text="Введите описание"
     )
-    owner = models.ForeignKey('users.User', null = True, on_delete=models.CASCADE, related_name='courses')
+    owner = models.ForeignKey(
+        "users.User", null=True, on_delete=models.CASCADE, related_name="courses"
+    )
 
     def __str__(self):
         return self.name
@@ -34,8 +34,12 @@ class Lesson(models.Model):
         upload_to="courses/images", blank=True, null=True, help_text="Изображение"
     )
     link = models.URLField(blank=True, null=True, help_text="Видео")
-    course = models.ForeignKey('courses.Course', related_name="lessons", on_delete=models.CASCADE)
-    owner = models.ForeignKey('users.User', null = True, on_delete=models.CASCADE, related_name='lesson')
+    course = models.ForeignKey(
+        "courses.Course", related_name="lessons", on_delete=models.CASCADE
+    )
+    owner = models.ForeignKey(
+        "users.User", null=True, on_delete=models.CASCADE, related_name="lesson"
+    )
 
     def __str__(self):
         return self.title
@@ -46,13 +50,15 @@ class Lesson(models.Model):
 
 
 class Subscription(models.Model):
-    user = models.ForeignKey('users.User', on_delete=models.CASCADE)
-    course = models.ForeignKey('courses.Course', on_delete=models.CASCADE)
+    user = models.ForeignKey("users.User", on_delete=models.CASCADE)
+    course = models.ForeignKey("courses.Course", on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.user.username} данный пользователь подписан на {self.course.name}"
+        return (
+            f"{self.user.username} данный пользователь подписан на {self.course.name}"
+        )
 
     class Meta:
-        unique_together = ('user', 'course')
+        unique_together = ("user", "course")
         verbose_name = "Подписка"
         verbose_name_plural = "Подписки"

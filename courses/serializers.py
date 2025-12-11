@@ -8,7 +8,7 @@ from courses.validators import link_validator
 
 class LessonSerializer(ModelSerializer):
     courses = SerializerMethodField()
-    link = serializers.CharField(validators = [link_validator])
+    link = serializers.CharField(validators=[link_validator])
 
     def get_courses(self, lesson):
         return [course.name for course in Course.objects.filter(lessons=lesson)]
@@ -23,11 +23,10 @@ class CourseSerializer(ModelSerializer):
     is_subscribed = serializers.SerializerMethodField()
 
     def get_is_subscribed(self, obj):
-        user = self.context.get('request').user
+        user = self.context.get("request").user
         if user.is_authenticated:
             return Subscription.objects.filter(user=user, course=obj).exists()
         return False
-
 
     class Meta:
         model = Course
