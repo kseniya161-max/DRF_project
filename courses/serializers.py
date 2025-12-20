@@ -43,3 +43,10 @@ class CourseSerializerDetail(ModelSerializer):
     class Meta:
         model = Course
         fields = ("name", "preview", "description", "count_course_with_same_lesson", "lessons")
+
+
+class SerializerSubscribtion(ModelSerializer):
+    class Meta:
+        model = Subscription
+        fields = '__all__'
+
