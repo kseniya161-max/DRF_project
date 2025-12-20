@@ -34,9 +34,11 @@ class CourseViewSet(ModelViewSet):
         filters.SearchFilter,
     ]
     filterset_fields = (
-        "course",
+        "name",
+        "owner",
         "lessons__title",
     )
+
     permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
@@ -69,7 +71,11 @@ class CourseViewSet(ModelViewSet):
         serializer.save(owner=self.request.user)
 
     def get_queryset(self):
-        return Course.objects.filter(owner=self.request.user)
+        user = self.request.user
+        if user.is_authenticated:
+            return Course.objects.filter(owner=self.request.user)
+        return Course.objects.none()
+
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -89,7 +95,10 @@ class LessonCreateAPIView(CreateAPIView):
         serializer.save(owner=self.request.user)
 
     def get_queryset(self):
-        return Course.objects.filter(owner=self.request.user)
+        user = self.request.user
+        if user.is_authenticated:
+            return Lesson.objects.filter(owner=self.request.user)
+        return Lesson.objects.none()
 
 
 class LessonListAPIView(ListAPIView):
@@ -99,7 +108,10 @@ class LessonListAPIView(ListAPIView):
     pagination_class = LessonsPaginator
 
     def get_queryset(self):
-        return Lesson.objects.filter(owner=self.request.user)
+        user = self.request.user
+        if user.is_authenticated:
+            return Lesson.objects.filter(owner=self.request.user)
+        return Lesson.objects.none()
 
 
 class LessonRetrieveAPIView(RetrieveAPIView):
@@ -111,7 +123,10 @@ class LessonRetrieveAPIView(RetrieveAPIView):
     )
 
     def get_queryset(self):
-        return Lesson.objects.filter(owner=self.request.user)
+        user = self.request.user
+        if user.is_authenticated:
+            return Lesson.objects.filter(owner=self.request.user)
+        return Lesson.objects.none()
 
 
 class LessonUpdateAPIView(UpdateAPIView):
@@ -123,7 +138,10 @@ class LessonUpdateAPIView(UpdateAPIView):
     )
 
     def get_queryset(self):
-        return Lesson.objects.filter(owner=self.request.user)
+        user = self.request.user
+        if user.is_authenticated:
+            return Lesson.objects.filter(owner=self.request.user)
+        return Lesson.objects.none()
 
 
 class LessonDestroyAPIView(DestroyAPIView):
@@ -132,7 +150,10 @@ class LessonDestroyAPIView(DestroyAPIView):
     permission_classes = (IsAuthenticated, IsOwner | ~IsModerator)
 
     def get_queryset(self):
-        return Lesson.objects.filter(owner=self.request.user)
+        user = self.request.user
+        if user.is_authenticated:
+            return Lesson.objects.filter(owner=self.request.user)
+        return Lesson.objects.none()
 
 
 class SubscriptionListAPIView(APIView):
