@@ -5,7 +5,7 @@ from django.db import models
 class User(AbstractUser):
     "Модель Пользователя"
 
-    username = None
+    username = models.CharField(max_length=150, unique=True, help_text="Введите имя пользователя")
     email = models.EmailField(max_length=35, unique=True, help_text="Введите email")
     phone = models.CharField(
         max_length=35, blank=True, null=True, help_text="Введите номер телефона"
@@ -29,21 +29,21 @@ class Payments(models.Model):
     """Модель Платежей"""
 
     username = models.ForeignKey(
-        'users.User',
+        "users.User",
         on_delete=models.CASCADE,
         related_name="payments",
         help_text="Пользователь",
     )
     payment_date = models.DateTimeField(auto_now_add=True)
     paid_course = models.ForeignKey(
-        'courses.Course',
+        "courses.Course",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
         help_text="Оплаченый курс",
     )
     paid_lesson = models.ForeignKey(
-        'courses.Lesson',
+        "courses.Lesson",
         on_delete=models.CASCADE,
         blank=True,
         null=True,

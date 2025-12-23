@@ -5,7 +5,8 @@ from rest_framework.generics import (
     DestroyAPIView,
     ListAPIView,
     RetrieveAPIView,
-    UpdateAPIView, get_object_or_404,
+    UpdateAPIView,
+    get_object_or_404,
 )
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -17,9 +18,11 @@ from courses.paginators import CoursesPaginator, LessonsPaginator
 from courses.serializers import (
     CourseSerializer,
     LessonSerializer,
-    CourseSerializerDetail, SerializerMethodField,
+    CourseSerializerDetail,
+    SerializerMethodField, SerializerSubscribtion,
 )
 from users.permissions import IsModerator, IsOwner
+from drf_yasg.utils import swagger_auto_schema
 
 
 class CourseViewSet(ModelViewSet):
@@ -32,10 +35,49 @@ class CourseViewSet(ModelViewSet):
         filters.SearchFilter,
     ]
     filterset_fields = (
-        "course",
+        "name",
+        "owner",
         "lessons__title",
     )
+
     permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        operation_description="Retrieve a list of courses",
+        responses={200: CourseSerializer(many=True)}
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        operation_description="Create a new course",
+        request_body=CourseSerializer,
+        responses={201: CourseSerializer}
+    )
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        operation_description="Retrieve a specific course",
+        responses={200: CourseSerializer}
+    )
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        operation_description="Update a specific course",
+        request_body=CourseSerializer,
+        responses={200: CourseSerializer}
+    )
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        operation_description="Delete a specific course",
+        responses={204: "No Content"}
+    )
+    def destroy(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
 
     def get_serializer_class(self):
         if self.action == "retrieve":
@@ -67,13 +109,16 @@ class CourseViewSet(ModelViewSet):
         serializer.save(owner=self.request.user)
 
     def get_queryset(self):
-        return Course.objects.filter(owner=self.request.user)
+        user = self.request.user
+        if user.is_authenticated:
+            return Course.objects.filter(owner=self.request.user)
+        return Course.objects.none()
+
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
-        context['request'] = self.request
+        context["request"] = self.request
         return context
-
 
 
 class LessonCreateAPIView(CreateAPIView):
@@ -84,11 +129,20 @@ class LessonCreateAPIView(CreateAPIView):
         IsAuthenticated,
     )
 
+    @swagger_auto_schema(
+        operation_description="Create a new lesson",
+        request_body=LessonSerializer,
+        responses={201: LessonSerializer}
+    )
+
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
     def get_queryset(self):
-        return Course.objects.filter(owner=self.request.user)
+        user = self.request.user
+        if user.is_authenticated:
+            return Lesson.objects.filter(owner=self.request.user)
+        return Lesson.objects.none()
 
 
 class LessonListAPIView(ListAPIView):
@@ -97,8 +151,18 @@ class LessonListAPIView(ListAPIView):
     permission_classes = [IsAuthenticated]
     pagination_class = LessonsPaginator
 
+    @swagger_auto_schema(
+        operation_description="Retrieve a list of lessons",
+        responses={200: LessonSerializer(many=True)}
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
     def get_queryset(self):
-        return Lesson.objects.filter(owner=self.request.user)
+        user = self.request.user
+        if user.is_authenticated:
+            return Lesson.objects.filter(owner=self.request.user)
+        return Lesson.objects.none()
 
 
 class LessonRetrieveAPIView(RetrieveAPIView):
@@ -109,8 +173,18 @@ class LessonRetrieveAPIView(RetrieveAPIView):
         IsModerator | IsOwner,
     )
 
+    @swagger_auto_schema(
+        operation_description="Retrieve a specific lesson",
+        responses={200: LessonSerializer}
+    )
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
+
     def get_queryset(self):
-        return Lesson.objects.filter(owner=self.request.user)
+        user = self.request.user
+        if user.is_authenticated:
+            return Lesson.objects.filter(owner=self.request.user)
+        return Lesson.objects.none()
 
 
 class LessonUpdateAPIView(UpdateAPIView):
@@ -121,8 +195,20 @@ class LessonUpdateAPIView(UpdateAPIView):
         IsModerator | IsOwner,
     )
 
+    @swagger_auto_schema(
+        operation_description="Update a specific lesson",
+        request_body=LessonSerializer,
+        responses={200: LessonSerializer}
+    )
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
+
+
     def get_queryset(self):
-        return Lesson.objects.filter(owner=self.request.user)
+        user = self.request.user
+        if user.is_authenticated:
+            return Lesson.objects.filter(owner=self.request.user)
+        return Lesson.objects.none()
 
 
 class LessonDestroyAPIView(DestroyAPIView):
@@ -130,30 +216,39 @@ class LessonDestroyAPIView(DestroyAPIView):
     serializer_class = LessonSerializer
     permission_classes = (IsAuthenticated, IsOwner | ~IsModerator)
 
+    @swagger_auto_schema(
+        operation_description="Delete a specific lesson",
+        responses={204: "No Content"}
+    )
+    def destroy(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
+
     def get_queryset(self):
-        return Lesson.objects.filter(owner=self.request.user)
+        user = self.request.user
+        if user.is_authenticated:
+            return Lesson.objects.filter(owner=self.request.user)
+        return Lesson.objects.none()
 
 
 class SubscriptionListAPIView(APIView):
     queryset = Subscription.objects.all()
-    serializer_class = SerializerMethodField
+    serializer_class = SerializerSubscribtion
     permission_classes = [IsAuthenticated]
 
-
+    @swagger_auto_schema(
+        operation_description="Subscribe or unsubscribe from a course",
+        request_body=SerializerSubscribtion,
+        responses={200: "Subscription updated"}
+    )
     def post(self, *args, **kwargs):
         user = self.request.user
-        course_id = self.request.data.get('course_id')
+        course_id = self.request.data.get("course_id")
         course_item = get_object_or_404(Course, id=course_id)
         subs_item = Subscription.objects.filter(user=user, course=course_item)
         if subs_item.exists():
             subs_item.delete()
-            message = 'Подписка удалена'
+            message = "Подписка удалена"
         else:
             Subscription.objects.create(user=user, course=course_item)
-            message = 'Новая подписка добавлена'
-        return Response({'message': message}, status=status.HTTP_200_OK)
-
-
-
-
-
+            message = "Новая подписка добавлена"
+        return Response({"message": message}, status=status.HTTP_200_OK)
