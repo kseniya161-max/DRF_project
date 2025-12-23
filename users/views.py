@@ -72,8 +72,8 @@ class CreatePaymentAPIView(APIView):
                 'quantity': 1,
             }],
             mode='payment',
-            success_url='https://yourdomain.com/success/',
-            cancel_url='https://yourdomain.com/cancel/',
+            success_url='http://127.0.0.1:8000/payment/success/',
+            cancel_url='http://127.0.0.1:8000//payment/failed/',
         )
 
         payment = Payments.objects.create(
@@ -91,7 +91,7 @@ class PaymentSuccessAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        return Response({"message": "Payment was successful!"}
+        return Response({"message": "Payment was successful!"})
 
 
 class PaymentFailedAPIView(APIView):

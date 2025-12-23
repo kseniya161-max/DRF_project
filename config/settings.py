@@ -177,5 +177,8 @@ SWAGGER_SETTINGS = {
     },
 }
 
-stripe.api_key = os.getenv('STRIPE_SECRET_KEY')
+
+load_dotenv()
+
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
 
