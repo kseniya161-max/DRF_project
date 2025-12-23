@@ -14,6 +14,7 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
+import stripe
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -176,5 +177,5 @@ SWAGGER_SETTINGS = {
     },
 }
 
-# Другие настройки...
+stripe.api_key = os.getenv('STRIPE_SECRET_KEY')
 
