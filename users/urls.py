@@ -11,5 +11,5 @@ urlpatterns = [
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path('payment/create/', CreatePaymentAPIView.as_view(), name='create_payment'),
     path('payment/success/', PaymentSuccessAPIView.as_view(), name='payment_success'),
-    path('payment/success/', PaymentFailedAPIView.as_view(), name='payment_failed'),
+    path('payment/failed/', PaymentFailedAPIView.as_view(), name='payment_failed'),
 ]

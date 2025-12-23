@@ -17,7 +17,9 @@ from django.conf import settings
 
 from courses.models import Course
 from users.models import Payments, User
-from users.serializers import PaymentsSerializer, UserAPIView
+from rest_framework.response import Response
+
+from users.serializers import PaymentsSerializer, UserAPIView, PaymentsRequestSerializer
 import stripe
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -47,43 +49,49 @@ class PaymentsListAPIView(ListAPIView):
 class CreatePaymentAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self,request):
-        user = request.user
-        course_id = request.data.get('course_id')
-        amount = request.data.get('amount')
+    @swagger_auto_schema(request_body=PaymentsRequestSerializer)
+    def post(self, request):
+        serializer = PaymentsRequestSerializer(data=request.data)
+        if serializer.is_valid():
+            user = request.user
+            course_id = serializer.validated_data['course_id']
+            amount = serializer.validated_data['amount']
+            try:
+                course = Course.objects.get(id=course_id)
+            except Course.DoesNotExist:
+                return Response({'error': 'Course not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        try:
-            course = Course.objects.get(id=course_id)
-        except Course.DoesNotExist:
-            return Response({'error': 'Course not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        product = stripe.Product.create(name=course.name)
+            product = stripe.Product.create(name=course.name)
 
-        price = stripe.Price.create(
-            unit_amount=int(amount * 100),
-            currency='usd',
-            product=product.id,
-        )
+            price = stripe.Price.create(
+                unit_amount=int(amount * 100),
+                currency='usd',
+                product=product.id,
+            )
 
-        session = stripe.checkout.Session.create(
-            payment_method_types=['card'],
-            line_items=[{
-                'price': price.id,
-                'quantity': 1,
-            }],
-            mode='payment',
-            success_url='http://127.0.0.1:8000/payment/success/',
-            cancel_url='http://127.0.0.1:8000//payment/failed/',
-        )
+            session = stripe.checkout.Session.create(
+                payment_method_types=['card'],
+                line_items=[{
+                    'price': price.id,
+                    'quantity': 1,
+                }],
+                mode='payment',
+                success_url='http://127.0.0.1:8000/users/payment/success/',
+                cancel_url='http://127.0.0.1:8000/payment/failed/',
+            )
 
-        payment = Payments.objects.create(
-            username=user,
-            paid_course=course,
-            sum=amount,
-            payment_detail='Stripe Payment',
-        )
+            payment = Payments.objects.create(
+                username=user,
+                paid_course=course,
+                sum=amount,
+                payment_detail='Stripe Payment',
+            )
 
-        return Response({'url': session.url}, status=status.HTTP_200_OK)
+            return Response({'url': session.url}, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class PaymentSuccessAPIView(APIView):
