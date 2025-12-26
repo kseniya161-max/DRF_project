@@ -182,3 +182,7 @@ load_dotenv()
 
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
 
+load_dotenv()
+CELERY_BROKER_URL = os.getenv('REDIS_URL')
+CELERY_RESULT_BACKEND = os.getenv('REDIS_URL')
+
