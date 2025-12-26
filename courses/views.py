@@ -21,6 +21,8 @@ from courses.serializers import (
     CourseSerializerDetail,
     SerializerMethodField, SerializerSubscribtion,
 )
+from courses.tasks import my_task
+from .tasks import my_task
 from users.permissions import IsModerator, IsOwner
 from drf_yasg.utils import swagger_auto_schema
 
@@ -248,7 +250,9 @@ class SubscriptionListAPIView(APIView):
         if subs_item.exists():
             subs_item.delete()
             message = "Подписка удалена"
+            my_task.delay(course_id=course_item.id, user_id=user.id)  # Вызов задачи
         else:
             Subscription.objects.create(user=user, course=course_item)
             message = "Новая подписка добавлена"
+            my_task.delay(course_id=course_item.id, user_id=user.id)  # Вызов задачи
         return Response({"message": message}, status=status.HTTP_200_OK)

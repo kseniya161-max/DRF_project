@@ -197,3 +197,19 @@ CELERY_BEAT_SCHEDULE = {
     },
 }
 
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),  # Увеличьте время жизни access токена
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),  # Увеличьте время жизни refresh токена
+    # Другие параметры...
+}
+
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = "your@yandex.ru"
+EMAIL_HOST_PASSWORD = "password"
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
