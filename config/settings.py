@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "django_filters",
     "rest_framework_simplejwt",
     'corsheaders',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
@@ -185,4 +186,14 @@ STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
 load_dotenv()
 CELERY_BROKER_URL = os.getenv('REDIS_URL')
 CELERY_RESULT_BACKEND = os.getenv('REDIS_URL')
+
+
+from celery.schedules import crontab
+
+CELERY_BEAT_SCHEDULE = {
+    'run-every-10-minutes': {
+        'task': 'config.tasks.periodic_task',
+        'schedule': timedelta(minutes=10),
+    },
+}
 
