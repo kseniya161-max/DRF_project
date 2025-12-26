@@ -21,10 +21,10 @@ from courses.serializers import (
     CourseSerializerDetail,
     SerializerMethodField, SerializerSubscribtion,
 )
-from courses.tasks import my_task
-from .tasks import my_task
+from .tasks import send_information
 from users.permissions import IsModerator, IsOwner
 from drf_yasg.utils import swagger_auto_schema
+
 
 
 class CourseViewSet(ModelViewSet):
@@ -231,7 +231,7 @@ class LessonDestroyAPIView(DestroyAPIView):
             return Lesson.objects.filter(owner=self.request.user)
         return Lesson.objects.none()
 
-
+from courses.models import Course, Lesson, Subscription
 class SubscriptionListAPIView(APIView):
     queryset = Subscription.objects.all()
     serializer_class = SerializerSubscribtion
@@ -250,9 +250,16 @@ class SubscriptionListAPIView(APIView):
         if subs_item.exists():
             subs_item.delete()
             message = "Подписка удалена"
-            my_task.delay(course_id=course_item.id, user_id=user.id)  # Вызов задачи
+            if course_item.owner and course_item.owner.email:
+                send_information.delay(course_item.owner.email)
+            else:
+                print("У курса нет владельца или у владельца нет email")
         else:
             Subscription.objects.create(user=user, course=course_item)
             message = "Новая подписка добавлена"
-            my_task.delay(course_id=course_item.id, user_id=user.id)  # Вызов задачи
+            if course_item.owner and course_item.owner.email:
+                send_information.delay(course_item.owner.email)
+            else:
+                print("У курса нет владельца или у владельца нет email")
+            send_information.delay(course_item.owner.email)
         return Response({"message": message}, status=status.HTTP_200_OK)

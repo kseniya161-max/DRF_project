@@ -1,12 +1,13 @@
 from celery import shared_task
-from .models import Subscription, Course
+from config .settings import EMAIL_HOST_USER
+from django.conf import settings
+from django.core.mail import send_mail
 
-
-# @shared_task
-# def periodic_task(course_id, user_id):
-#     print(f'Выполнение задачи для курса с ID: {course_id} и пользователя с ID: {user_id}')
 
 
 @shared_task
-def my_task(course_id, user_id):
-    print(f'Выполнение задачи для курса с ID: {course_id} и пользователя с ID: {user_id}')
+def send_information(email):
+    if email:
+        send_mail('Новая подписка', 'Вы обновили подписку', EMAIL_HOST_USER, [email])
+    else:
+        raise ValueError("Email не может быть пустым")
