@@ -21,8 +21,10 @@ from courses.serializers import (
     CourseSerializerDetail,
     SerializerMethodField, SerializerSubscribtion,
 )
+from .tasks import send_information
 from users.permissions import IsModerator, IsOwner
 from drf_yasg.utils import swagger_auto_schema
+
 
 
 class CourseViewSet(ModelViewSet):
@@ -84,14 +86,7 @@ class CourseViewSet(ModelViewSet):
             return CourseSerializerDetail
         return CourseSerializer
 
-    # def get_permissions(self):
-    #     if self.action == "create":
-    #         self.permission_classes = ~IsModerator
-    #     elif self.action in ["update", "retrieve"]:
-    #         self.permission_classes = (IsModerator | IsOwner,)
-    #     elif self.action == "destroy":
-    #         self.permission_classes = (~IsModerator | IsOwner,)
-    #     return super().get_permissions()
+
 
     def get_permissions(self):
         if self.action == "create":
@@ -229,7 +224,7 @@ class LessonDestroyAPIView(DestroyAPIView):
             return Lesson.objects.filter(owner=self.request.user)
         return Lesson.objects.none()
 
-
+from courses.models import Course, Lesson, Subscription
 class SubscriptionListAPIView(APIView):
     queryset = Subscription.objects.all()
     serializer_class = SerializerSubscribtion
@@ -241,6 +236,7 @@ class SubscriptionListAPIView(APIView):
         responses={200: "Subscription updated"}
     )
     def post(self, *args, **kwargs):
+        print("Метод POST вызван")
         user = self.request.user
         course_id = self.request.data.get("course_id")
         course_item = get_object_or_404(Course, id=course_id)
@@ -248,7 +244,23 @@ class SubscriptionListAPIView(APIView):
         if subs_item.exists():
             subs_item.delete()
             message = "Подписка удалена"
+            if course_item.owner and course_item.owner.email:
+                print(f"Отправляем письмо на email: {course_item.owner.email}")
+                send_information.delay(course_item.owner.email)
+                # send_information.delay(course_item.owner.email)
+            else:
+                print("У курса нет владельца или у владельца нет email")
         else:
             Subscription.objects.create(user=user, course=course_item)
             message = "Новая подписка добавлена"
+            if course_item.owner:
+                print(course_item.owner.email)
+                if course_item.owner.email:
+                    send_information.delay(course_item.owner.email)
+                else:
+                    print("У владельца нет email.")
+            else:
+                print("У курса нет владельца.")
+
         return Response({"message": message}, status=status.HTTP_200_OK)
+

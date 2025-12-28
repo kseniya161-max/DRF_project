@@ -14,7 +14,6 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
-import stripe
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -47,6 +46,8 @@ INSTALLED_APPS = [
     "django_filters",
     "rest_framework_simplejwt",
     'corsheaders',
+    'django_celery_beat',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -177,8 +178,52 @@ SWAGGER_SETTINGS = {
     },
 }
 
-
+from celery.schedules import crontab
 load_dotenv()
 
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
+
+load_dotenv()
+CELERY_BROKER_URL = os.getenv('REDIS_URL')
+CELERY_RESULT_BACKEND = os.getenv('REDIS_URL')
+
+
+
+
+CELERY_BEAT_SCHEDULE = {
+    'run-every-10-minutes': {
+        'task': 'config.tasks.check_user_activity',
+        'schedule': timedelta(minutes=10),
+    },
+}
+
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+}
+
+CELERY_BROKER_URL=os.getenv('CELERY_BROKER_URL')
+CELERY_RESULT_BACKEND=os.getenv('CELERY_RESULT_BACKEND')
+
+
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND')
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = os.getenv('EMAIL_PORT')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
+
+
+SERVER_EMAIL = EMAIL_HOST_USER
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
 
