@@ -14,7 +14,6 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
-import stripe
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -179,7 +178,7 @@ SWAGGER_SETTINGS = {
     },
 }
 
-
+from celery.schedules import crontab
 load_dotenv()
 
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
@@ -189,11 +188,11 @@ CELERY_BROKER_URL = os.getenv('REDIS_URL')
 CELERY_RESULT_BACKEND = os.getenv('REDIS_URL')
 
 
-from celery.schedules import crontab
+
 
 CELERY_BEAT_SCHEDULE = {
     'run-every-10-minutes': {
-        'task': 'config.tasks.periodic_task',
+        'task': 'config.tasks.check_user_activity',
         'schedule': timedelta(minutes=10),
     },
 }
@@ -203,9 +202,8 @@ CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),  # Увеличьте время жизни access токена
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),  # Увеличьте время жизни refresh токена
-    # Другие параметры...
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
 CELERY_BROKER_URL=os.getenv('CELERY_BROKER_URL')
