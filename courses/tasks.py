@@ -4,7 +4,6 @@ from celery import shared_task
 from django.core.mail import send_mail
 from django.conf import settings
 
-from users.models import User
 
 
 @shared_task
@@ -23,6 +22,8 @@ def send_information(email):
 
 @shared_task
 def check_user_activity():
+    print("Задача check_user_activity запущена.")
+    from users.models import User
     now = timezone.now()
     inactive_users = User.objects.filter(last_login__lt=now - timezone.timedelta(days=30), is_active=True)
 
