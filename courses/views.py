@@ -247,7 +247,6 @@ class SubscriptionListAPIView(APIView):
             if course_item.owner and course_item.owner.email:
                 print(f"Отправляем письмо на email: {course_item.owner.email}")
                 send_information.delay(course_item.owner.email)
-                # send_information.delay(course_item.owner.email)
             else:
                 print("У курса нет владельца или у владельца нет email")
         else:
