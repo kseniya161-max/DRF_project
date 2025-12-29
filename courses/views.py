@@ -1,3 +1,6 @@
+from datetime import timedelta
+
+from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, request, status
 from rest_framework.generics import (
@@ -72,8 +75,20 @@ class CourseViewSet(ModelViewSet):
         request_body=CourseSerializer,
         responses={200: CourseSerializer}
     )
-    def update(self, request, *args, **kwargs):
-        return super().update(request, *args, **kwargs)
+    # def update(self, request, *args, **kwargs):
+    #     return super().update(request, *args, **kwargs)
+
+    def perform_update(self, serializer):
+        course = serializer.save()
+        now = timezone.now()
+        time_since_update = now - course.updated_at
+
+        if time_since_update > timedelta(hours=4):
+            subscribers = Subscription.objects.filter(course=course)
+            for subscription in subscribers:
+                send_information.delay(subscription.user.email)
+
+
 
     @swagger_auto_schema(
         operation_description="Delete a specific course",
@@ -245,22 +260,9 @@ class SubscriptionListAPIView(APIView):
         if subs_item.exists():
             subs_item.delete()
             message = "Подписка удалена"
-            if course_item.owner and course_item.owner.email:
-                print(f"Отправляем письмо на email: {course_item.owner.email}")
-                send_information.delay(course_item.owner.email)
-            else:
-                print("У курса нет владельца или у владельца нет email")
+
         else:
             Subscription.objects.create(user=user, course=course_item)
             message = "Новая подписка добавлена"
-            if course_item.owner:
-                print(course_item.owner.email)
-                if course_item.owner.email:
-                    send_information.delay(course_item.owner.email)
-                else:
-                    print("У владельца нет email.")
-            else:
-                print("У курса нет владельца.")
-
         return Response({"message": message}, status=status.HTTP_200_OK)
 
