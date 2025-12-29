@@ -22,6 +22,7 @@ from rest_framework.response import Response
 from users.serializers import PaymentsSerializer, UserAPIView, PaymentsRequestSerializer
 import stripe
 
+
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 

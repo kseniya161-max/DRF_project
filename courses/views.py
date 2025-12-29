@@ -22,6 +22,7 @@ from courses.serializers import (
     SerializerMethodField, SerializerSubscribtion,
 )
 from .tasks import send_information
+from users.tasks import check_user_activity
 from users.permissions import IsModerator, IsOwner
 from drf_yasg.utils import swagger_auto_schema
 
