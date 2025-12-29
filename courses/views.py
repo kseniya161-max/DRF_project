@@ -86,6 +86,7 @@ class CourseViewSet(ModelViewSet):
         if time_since_update > timedelta(hours=4):
             subscribers = Subscription.objects.filter(course=course)
             for subscription in subscribers:
+                print('отправка письма после обновления')
                 send_information.delay(subscription.user.email)
 
 

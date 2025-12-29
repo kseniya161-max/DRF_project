@@ -1,17 +1,19 @@
 from __future__ import absolute_import, unicode_literals
 import os
 from datetime import timedelta
-
 from celery import Celery
 
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
+import django
+django.setup()
 
 app = Celery('courses')
 
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
 app.autodiscover_tasks()
+import users.tasks
 
 app.conf.beat_schedule = {
     'run-every-10-minutes': {
