@@ -79,9 +79,11 @@ class CourseViewSet(ModelViewSet):
     #     return super().update(request, *args, **kwargs)
 
     def perform_update(self, serializer):
+        course = self.get_object()
+        prev_updated_at = course.updated_at
         course = serializer.save()
         now = timezone.now()
-        time_since_update = now - course.updated_at
+        time_since_update = now - prev_updated_at
 
         if time_since_update > timedelta(hours=4):
             subscribers = Subscription.objects.filter(course=course)
