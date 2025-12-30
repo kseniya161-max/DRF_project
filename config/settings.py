@@ -173,12 +173,6 @@ STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
 
 load_dotenv()
 
-CELERY_BEAT_SCHEDULE = {
-    'check_user_activity': {
-        'task': 'courses.tasks.check_user_activity',
-        'schedule': timedelta(minutes=10),
-    },
-}
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 
 
@@ -207,8 +201,14 @@ EMAIL_USE_SSL = True
 SERVER_EMAIL = EMAIL_HOST_USER
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+# CELERY_BROKER_URL = 'redis://localhost:6379/0'
+# CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
+
+
+CELERY_BEAT_SCHEDULE = {
+    'check-user-activity-every-day': {
+        'task': 'users.tasks.check_user_activity',
+        'schedule': timedelta(days=1), },}
 
