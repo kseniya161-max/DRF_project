@@ -5,24 +5,19 @@ from celery import Celery
 
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
-import django
-django.setup()
-
-app = Celery('courses')
-
+app = Celery('config')
 app.config_from_object('django.conf:settings', namespace='CELERY')
-
 app.autodiscover_tasks()
 import users.tasks
 
-app.conf.beat_schedule = {
-    'run-every-10-minutes': {
-        'task': 'courses.tasks.check_user_activity',
-        'schedule': timedelta(minutes=10),
-    },
-}
+# app.conf.beat_schedule = {
+#     'run-every-10-minutes': {
+#         'task': 'courses.tasks.check_user_activity',
+#         'schedule': timedelta(minutes=10),
+#     },
+# }
 
-app.conf.timezone = 'UTC'
+
 
 
 
