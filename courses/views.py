@@ -24,7 +24,7 @@ from courses.serializers import (
     CourseSerializerDetail,
     SerializerMethodField, SerializerSubscribtion,
 )
-from .tasks import send_information
+from .tasks import send_course_update_email
 from users.tasks import check_user_activity
 from users.permissions import IsModerator, IsOwner
 from drf_yasg.utils import swagger_auto_schema
@@ -75,8 +75,6 @@ class CourseViewSet(ModelViewSet):
         request_body=CourseSerializer,
         responses={200: CourseSerializer}
     )
-    # def update(self, request, *args, **kwargs):
-    #     return super().update(request, *args, **kwargs)
 
     def perform_update(self, serializer):
         course = self.get_object()
@@ -85,11 +83,13 @@ class CourseViewSet(ModelViewSet):
         now = timezone.now()
         time_since_update = now - prev_updated_at
 
-        if time_since_update > timedelta(hours=4):
-            subscribers = Subscription.objects.filter(course=course)
-            for subscription in subscribers:
-                print('отправка письма после обновления')
-                send_information.delay(subscription.user.email)
+        if time_since_update > timedelta(seconds=10):
+            print('отправка письма после обновления')
+            send_course_update_email.delay(course.id)
+            # subscribers = Subscription.objects.filter(course=course)
+            # for subscription in subscribers:
+            #     print('отправка письма после обновления')
+            #     send_information.delay(subscription.user.email)
 
 
 

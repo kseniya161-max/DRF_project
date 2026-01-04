@@ -173,7 +173,7 @@ STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
 
 load_dotenv()
 
-CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
+# CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 
 
 CELERY_TIMEZONE = TIME_ZONE
@@ -206,7 +206,7 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 
-
+from celery.schedules import crontab
 CELERY_BEAT_SCHEDULE = {
     'check-user-activity-every-day': {
         'task': 'users.tasks.check_user_activity',
