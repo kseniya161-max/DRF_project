@@ -215,6 +215,7 @@ config.py
 db.sqlite3
 .idea/
 .env/
+celerybeat-schedule*
 
 
 
