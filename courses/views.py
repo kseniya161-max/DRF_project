@@ -86,11 +86,6 @@ class CourseViewSet(ModelViewSet):
         if time_since_update > timedelta(seconds=10):
             print('отправка письма после обновления')
             send_course_update_email.delay(course.id)
-            # subscribers = Subscription.objects.filter(course=course)
-            # for subscription in subscribers:
-            #     print('отправка письма после обновления')
-            #     send_information.delay(subscription.user.email)
-
 
 
     @swagger_auto_schema(
