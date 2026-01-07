@@ -6,9 +6,9 @@ RUN apt-get update && apt-get install -y \
     python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /DRF_project
+WORKDIR /app
 
-COPY pyproject.toml ./
+COPY pyproject.toml poetry.lock ./
 
 RUN pip install poetry
 
@@ -16,6 +16,10 @@ RUN poetry install --no-root
 
 COPY . .
 
+ENV PYTHONPATH=/app
+
 EXPOSE 8000
+
+# CMD ["sh", "-c", "export PYTHONPATH=/app && poetry run python manage.py runserver 0.0.0.0:8000"]
 
 CMD ["poetry", "run", "python", "manage.py", "runserver", "0.0.0.0:8000"]
