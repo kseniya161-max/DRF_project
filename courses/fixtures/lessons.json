@@ -1,0 +1,20 @@
+[
+  {"model": "courses.lesson",
+    "pk": 1,
+    "fields": {
+      "title": "Заголовок",
+      "description": null,
+      "preview": null,
+      "link": null,
+      "course": 1
+    }},
+    {"model": "courses.lesson",
+    "pk": 2,
+    "fields": {
+      "title": "Заголовок2",
+      "description": null,
+      "preview": null,
+      "link": null,
+      "course": 2
+    }}
+  ]
