@@ -22,13 +22,14 @@ from courses.serializers import (
     CourseSerializer,
     LessonSerializer,
     CourseSerializerDetail,
-    SerializerMethodField, SerializerSubscribtion,
+    SerializerMethodField,
+    SerializerSubscribtion,
 )
 from .tasks import send_course_update_email
 from users.tasks import check_user_activity
 from users.permissions import IsModerator, IsOwner
 from drf_yasg.utils import swagger_auto_schema
-
+from courses.models import Course, Lesson, Subscription
 
 
 class CourseViewSet(ModelViewSet):
@@ -50,7 +51,7 @@ class CourseViewSet(ModelViewSet):
 
     @swagger_auto_schema(
         operation_description="Retrieve a list of courses",
-        responses={200: CourseSerializer(many=True)}
+        responses={200: CourseSerializer(many=True)},
     )
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
@@ -58,14 +59,14 @@ class CourseViewSet(ModelViewSet):
     @swagger_auto_schema(
         operation_description="Create a new course",
         request_body=CourseSerializer,
-        responses={201: CourseSerializer}
+        responses={201: CourseSerializer},
     )
     def create(self, request, *args, **kwargs):
         return super().create(request, *args, **kwargs)
 
     @swagger_auto_schema(
         operation_description="Retrieve a specific course",
-        responses={200: CourseSerializer}
+        responses={200: CourseSerializer},
     )
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
@@ -73,9 +74,8 @@ class CourseViewSet(ModelViewSet):
     @swagger_auto_schema(
         operation_description="Update a specific course",
         request_body=CourseSerializer,
-        responses={200: CourseSerializer}
+        responses={200: CourseSerializer},
     )
-
     def perform_update(self, serializer):
         course = self.get_object()
         prev_updated_at = course.updated_at
@@ -84,13 +84,11 @@ class CourseViewSet(ModelViewSet):
         time_since_update = now - prev_updated_at
 
         if time_since_update > timedelta(seconds=10):
-            print('отправка письма после обновления')
+            print("отправка письма после обновления")
             send_course_update_email.delay(course.id)
 
-
     @swagger_auto_schema(
-        operation_description="Delete a specific course",
-        responses={204: "No Content"}
+        operation_description="Delete a specific course", responses={204: "No Content"}
     )
     def destroy(self, request, *args, **kwargs):
         return super().destroy(request, *args, **kwargs)
@@ -99,8 +97,6 @@ class CourseViewSet(ModelViewSet):
         if self.action == "retrieve":
             return CourseSerializerDetail
         return CourseSerializer
-
-
 
     def get_permissions(self):
         if self.action == "create":
@@ -123,7 +119,6 @@ class CourseViewSet(ModelViewSet):
             return Course.objects.filter(owner=self.request.user)
         return Course.objects.none()
 
-
     def get_serializer_context(self):
         context = super().get_serializer_context()
         context["request"] = self.request
@@ -141,9 +136,8 @@ class LessonCreateAPIView(CreateAPIView):
     @swagger_auto_schema(
         operation_description="Create a new lesson",
         request_body=LessonSerializer,
-        responses={201: LessonSerializer}
+        responses={201: LessonSerializer},
     )
-
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
@@ -162,7 +156,7 @@ class LessonListAPIView(ListAPIView):
 
     @swagger_auto_schema(
         operation_description="Retrieve a list of lessons",
-        responses={200: LessonSerializer(many=True)}
+        responses={200: LessonSerializer(many=True)},
     )
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
@@ -184,7 +178,7 @@ class LessonRetrieveAPIView(RetrieveAPIView):
 
     @swagger_auto_schema(
         operation_description="Retrieve a specific lesson",
-        responses={200: LessonSerializer}
+        responses={200: LessonSerializer},
     )
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
@@ -207,11 +201,10 @@ class LessonUpdateAPIView(UpdateAPIView):
     @swagger_auto_schema(
         operation_description="Update a specific lesson",
         request_body=LessonSerializer,
-        responses={200: LessonSerializer}
+        responses={200: LessonSerializer},
     )
     def update(self, request, *args, **kwargs):
         return super().update(request, *args, **kwargs)
-
 
     def get_queryset(self):
         user = self.request.user
@@ -226,8 +219,7 @@ class LessonDestroyAPIView(DestroyAPIView):
     permission_classes = (IsAuthenticated, IsOwner | ~IsModerator)
 
     @swagger_auto_schema(
-        operation_description="Delete a specific lesson",
-        responses={204: "No Content"}
+        operation_description="Delete a specific lesson", responses={204: "No Content"}
     )
     def destroy(self, request, *args, **kwargs):
         return super().destroy(request, *args, **kwargs)
@@ -238,7 +230,7 @@ class LessonDestroyAPIView(DestroyAPIView):
             return Lesson.objects.filter(owner=self.request.user)
         return Lesson.objects.none()
 
-from courses.models import Course, Lesson, Subscription
+
 class SubscriptionListAPIView(APIView):
     queryset = Subscription.objects.all()
     serializer_class = SerializerSubscribtion
@@ -247,7 +239,7 @@ class SubscriptionListAPIView(APIView):
     @swagger_auto_schema(
         operation_description="Subscribe or unsubscribe from a course",
         request_body=SerializerSubscribtion,
-        responses={200: "Subscription updated"}
+        responses={200: "Subscription updated"},
     )
     def post(self, *args, **kwargs):
         print("Метод POST вызван")
@@ -263,4 +255,3 @@ class SubscriptionListAPIView(APIView):
             Subscription.objects.create(user=user, course=course_item)
             message = "Новая подписка добавлена"
         return Response({"message": message}, status=status.HTTP_200_OK)
-

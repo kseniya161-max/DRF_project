@@ -1,11 +1,12 @@
 from django.contrib import admin
 from .models import Course, Lesson
 
+
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ('name', 'owner')
+    list_display = ("name", "owner")
+
 
 @admin.register(Lesson)
 class LessonAdmin(admin.ModelAdmin):
-    list_display = ('title', 'course')
-
+    list_display = ("title", "course")
