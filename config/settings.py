@@ -1,4 +1,5 @@
 import os
+import sys
 from datetime import timedelta
 from pathlib import Path
 
@@ -10,7 +11,14 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 SECRET_KEY = os.getenv("SECRET_KEY")
+
+if SECRET_KEY is None:
+    raise ValueError("SECRET_KEY environment variable not set")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -212,4 +220,13 @@ CELERY_BEAT_SCHEDULE = {
     'check-user-activity-every-day': {
         'task': 'users.tasks.check_user_activity',
         'schedule': timedelta(days=1), },}
+
+if 'test' in sys.argv:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
+
 
