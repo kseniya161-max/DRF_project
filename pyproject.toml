@@ -2,7 +2,7 @@
 name = "drf-project"
 version = "0.1.0"
 description = ""
-authors = ["Your Name <you@example.com>"]  # Измените на строку
+authors = ["kseniya161 <baharevaxen@yandex.ru>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
@@ -25,7 +25,21 @@ django-celery-beat = ">=2.8.1,<3.0.0"
 django-cors-headers = ">=4.9.0,<5.0.0"
 dj-config-url = "^0.1.1"
 dj-database-url = "^3.1.0"
+stripe = "^14.1.0"
+gunicorn = "^23.0.0"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+
+[[tool.poetry.packages]]
+include = "courses"
+
+[[tool.poetry.packages]]
+include = "users"
+
+[[tool.poetry.packages]]
+include = "config"
+
+
