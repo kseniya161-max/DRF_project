@@ -17,6 +17,8 @@ RUN poetry install --no-root
 
 COPY . .
 
+COPY static /home/kseniya161/app/static
+
 ENV PYTHONPATH=/app
 
 COPY myapp_nginx.conf /etc/nginx/conf.d/
