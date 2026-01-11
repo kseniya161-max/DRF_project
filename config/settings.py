@@ -4,6 +4,8 @@ from datetime import timedelta
 from pathlib import Path
 
 from dotenv import load_dotenv
+from celery.schedules import crontab
+
 
 load_dotenv()
 
@@ -11,7 +13,6 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -41,9 +42,9 @@ INSTALLED_APPS = [
     "courses",
     "django_filters",
     "rest_framework_simplejwt",
-    'corsheaders',
-    'django_celery_beat',
-    'django_extensions',
+    "corsheaders",
+    "django_celery_beat",
+    "django_extensions",
 ]
 
 MIDDLEWARE = [
@@ -54,8 +55,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -155,30 +156,31 @@ SIMPLE_JWT = {
 }
 
 SWAGGER_SETTINGS = {
-    'USE_SESSION_AUTH': False,
+    "USE_SESSION_AUTH": False,
 }
 
 CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8000",]
+    "http://localhost:8000",
+]
 
 #
 SWAGGER_SETTINGS = {
-    'USE_SESSION_AUTH': False,
-    'SECURITY_DEFINITIONS': {
-        'Bearer': {
-            'type': 'apiKey',
-            'name': 'Authorization',
-            'in': 'header',
+    "USE_SESSION_AUTH": False,
+    "SECURITY_DEFINITIONS": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
         }
     },
 }
 
-from celery.schedules import crontab
+
 load_dotenv()
 
-STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
 
 load_dotenv()
 
@@ -190,19 +192,19 @@ CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
 load_dotenv()
-CELERY_BROKER_URL=os.getenv('CELERY_BROKER_URL')
-CELERY_RESULT_BACKEND=os.getenv('CELERY_RESULT_BACKEND')
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
+CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND")
 
 
-EMAIL_BACKEND = os.getenv('EMAIL_BACKEND')
-EMAIL_HOST = os.getenv('EMAIL_HOST')
-EMAIL_PORT = os.getenv('EMAIL_PORT')
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_BACKEND = os.getenv("EMAIL_BACKEND")
+EMAIL_HOST = os.getenv("EMAIL_HOST")
+EMAIL_PORT = os.getenv("EMAIL_PORT")
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
 
@@ -210,23 +212,21 @@ EMAIL_USE_SSL = True
 SERVER_EMAIL = EMAIL_HOST_USER
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-# CELERY_BROKER_URL = 'redis://localhost:6379/0'
-# CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
 
-from celery.schedules import crontab
+
 CELERY_BEAT_SCHEDULE = {
-    'check-user-activity-every-day': {
-        'task': 'users.tasks.check_user_activity',
-        'schedule': timedelta(days=1), },}
+    "check-user-activity-every-day": {
+        "task": "users.tasks.check_user_activity",
+        "schedule": timedelta(days=1),
+    },
+}
 
-if 'test' in sys.argv:
+if "test" in sys.argv:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
-            "NAME": os.path.join(BASE_DIR, 'db.sqlite3'),
+            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
         }
     }
-
-

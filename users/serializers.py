@@ -10,13 +10,14 @@ class PaymentsSerializer(serializers.ModelSerializer):
         model = Payments
         fields = "__all__"
 
+
 class PaymentsRequestSerializer(serializers.ModelSerializer):
     course_id = serializers.IntegerField()
     amount = serializers.DecimalField(max_digits=10, decimal_places=2)
 
     class Meta:
         model = Payments
-        fields = ['course_id', 'amount']
+        fields = ["course_id", "amount"]
 
 
 class UserAPIView(ModelSerializer):

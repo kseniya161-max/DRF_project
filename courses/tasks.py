@@ -1,4 +1,3 @@
-
 from celery import shared_task
 from django.core.mail import send_mail
 from django.conf import settings
@@ -20,6 +19,7 @@ from courses.models import Course, Subscription
 #         fail_silently=False,
 #     )
 
+
 @shared_task
 def send_course_update_email(course_id):
     subscribers = Subscription.objects.filter(course_id=course_id)
@@ -30,12 +30,9 @@ def send_course_update_email(course_id):
             raise ValueError("Email не может быть пустым")
 
         send_mail(
-            'Обновление курса',
-            'Курс обновлен',
+            "Обновление курса",
+            "Курс обновлен",
             settings.EMAIL_HOST_USER,
             [email],
             fail_silently=False,
         )
-
-
-
